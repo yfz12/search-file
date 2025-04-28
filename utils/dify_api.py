@@ -21,7 +21,10 @@ def audit_file(file_path):
         response = requests.post(url, headers=headers, files=files)
 
     if response.status_code != 200:
-        raise Exception(f"Dify API Error: {response.status_code} {response.text}")
+        import streamlit as st
+        st.error(f"Dify API返回错误：{response.status_code} - {response.text}")
+        return "调用Dify失败，请检查API KEY、Agent配置或文件格式。"
+        
 
     result = response.json()
 
