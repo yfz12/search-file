@@ -1,47 +1,35 @@
-import os
-import tempfile
-import fitz  # PyMuPDF
-import docx
-import pandas as pd
+from utils.dify_api import audit_text
 
 def handle_uploaded_file(uploaded_file):
-    temp_dir = tempfile.gettempdir()
-    file_path = os.path.join(temp_dir, uploaded_file.name)
+    # 获取文件路径
+    file_path = f"uploaded_files/{uploaded_file.name}"
+
+    # 保存文件到本地
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
-    return file_path
 
-def extract_text_from_file(file_path):
-    ext = os.path.splitext(file_path)[1].lower()
+    # 读取文件内容
+    file_text = ""
+    if uploaded_file.type == "application/pdf":
+        # 这里用一些PDF阅读库来提取PDF内容，例如 PyPDF2 或 pdfplumber
+        import pdfplumber
+        with pdfplumber.open(file_path) as pdf:
+            file_text = "\n".join([page.extract_text() for page in pdf.pages])
+    elif uploaded_file.type == "application/msword" or uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        # 处理Word文件
+        import docx
+        doc = docx.Document(file_path)
+        file_text = "\n".join([para.text for para in doc.paragraphs])
+    elif uploaded_file.type == "application/vnd.ms-excel" or uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        # 处理Excel文件
+        import pandas as pd
+        df = pd.read_excel(file_path)
+        file_text = df.to_string()
+    elif uploaded_file.type == "text/markdown":
+        # 处理Markdown文件
+        file_text = uploaded_file.getvalue().decode("utf-8")
 
-    if ext == ".pdf":
-        return extract_text_from_pdf(file_path)
-    elif ext == ".docx":
-        return extract_text_from_docx(file_path)
-    elif ext == ".xlsx":
-        return extract_text_from_excel(file_path)
-    elif ext == ".md":
-        with open(file_path, "r", encoding="utf-8") as f:
-            return f.read()
-    else:
-        raise ValueError("不支持的文件格式！")
+    # 调用审校API
+    audit_result = audit_text(file_text)
 
-def extract_text_from_pdf(file_path):
-    doc = fitz.open(file_path)
-    text = ""
-    for page in doc:
-        text += page.get_text()
-    return text
-
-def extract_text_from_docx(file_path):
-    doc = docx.Document(file_path)
-    text = "\n".join([para.text for para in doc.paragraphs])
-    return text
-
-def extract_text_from_excel(file_path):
-    df = pd.read_excel(file_path, sheet_name=None)
-    text = ""
-    for sheet_name, sheet_df in df.items():
-        text += f"\n--- Sheet: {sheet_name} ---\n"
-        text += sheet_df.to_string(index=False)
-    return text
+    return file_path, audit_result
