@@ -1,24 +1,23 @@
 from fpdf import FPDF
+import os
 
-def generate_pdf(audit_result):
+def generate_pdf(audit_text):
+    output_dir = "generated_reports"
+    os.makedirs(output_dir, exist_ok=True)
+
     pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-
     pdf.set_font("Arial", size=12)
-    
-    # 添加标题
-    pdf.cell(200, 10, txt="审校报告", ln=True, align='C')
-    
-    # 添加审校结果
-    for key, value in audit_result.items():
-        if isinstance(value, str):
-            pdf.cell(200, 10, txt=f"{key}: {value}", ln=True)
-        elif isinstance(value, list):
-            pdf.cell(200, 10, txt=f"{key}: ", ln=True)
-            for item in value:
-                pdf.cell(200, 10, txt=f"- {item}", ln=True)
 
-    pdf_output_path = "audit_report.pdf"
-    pdf.output(pdf_output_path)
-    return pdf_output_path
+    # 按行分段写入
+    for line in audit_text.split("\n"):
+        pdf.multi_cell(0, 10, line)
+
+    output_path = os.path.join(output_dir, "audit_report.pdf")
+    pdf.output(output_path)
+
+    # 读取生成的PDF文件，返回给Streamlit下载用
+    with open(output_path, "rb") as f:
+        pdf_bytes = f.read()
+
+    return pdf_bytes
