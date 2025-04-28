@@ -2,10 +2,15 @@ from fpdf import FPDF
 import os
 import tempfile
 
+class PDF(FPDF):
+    def __init__(self):
+        super().__init__()
+        self.add_font('DejaVu', '', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', uni=True)
+        self.set_font('DejaVu', '', 12)
+
 def generate_pdf(content):
-    pdf = FPDF()
+    pdf = PDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
 
     lines = content.split('\n')
     for line in lines:
