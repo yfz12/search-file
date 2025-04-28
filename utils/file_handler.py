@@ -139,42 +139,43 @@ def handle_uploaded_file(uploaded_file):
     file_text = ""
     with st.spinner("正在提取文件内容..."):
         if uploaded_file.type == "application/pdf":
-            # 这里用一些PDF阅读库来提取PDF内容，例如 PyPDF2 或 pdfplumber
+            # 使用 pdfplumber 提取PDF文件内容
             import pdfplumber
             with pdfplumber.open(file_path) as pdf:
                 file_text = "\n".join([page.extract_text() for page in pdf.pages if page.extract_text()])
         elif uploaded_file.type == "application/msword" or uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            # 处理Word文件
+            # 使用 docx 读取Word文件内容
             import docx
             doc = docx.Document(file_path)
             file_text = "\n".join([para.text for para in doc.paragraphs])
         elif uploaded_file.type == "application/vnd.ms-excel" or uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-            # 处理Excel文件
+            # 使用 pandas 读取Excel文件内容
             import pandas as pd
             df = pd.read_excel(file_path)
             file_text = df.to_string()
         elif uploaded_file.type == "text/markdown":
-            # 处理Markdown文件
+            # 读取Markdown文件内容
             file_text = uploaded_file.getvalue().decode("utf-8")
 
-    # 调试：打印 file_text 内容
-    st.write(f"提取的文件内容预览：{file_text[:200]}...")  # 显示提取的文件前200个字符
+    # 显示提取的文件内容预览
+    st.write(f"提取的文件内容预览：{file_text[:200]}...")  # 显示前200个字符
 
     # 检查 file_text 是否为空
     if not file_text.strip():
         st.error(f"无法提取有效的文本内容，文件类型或内容可能无法识别：{uploaded_file.type}")
         return None, "无法提取有效的文本内容"
 
-    # 调用审校API
+    # 调用审校API进行审校
     with st.spinner("正在进行审校，请稍等..."):
         audit_result = audit_text(file_text)
-    
+
     if not audit_result:
         st.error("审校结果为空，请检查文件内容或API设置。")
         return file_path, "审校失败"
 
-    # 显示审校结果
+    # 显示审校结果在页面上
     st.subheader("审校报告")
-    st.write(audit_result)  # 显示审校后的内容
+    st.write(audit_result)  # 直接显示审校结果
 
     return file_path, audit_result
+
