@@ -18,7 +18,8 @@ def audit_text(file_text):
         "inputs": {
             "text": file_text
         },
-        "response_mode": "blocking"
+        "response_mode": "blocking",
+        "user": "audit_user"  # ✅ 这里必须有
     }
 
     response = requests.post(url, headers=headers, json=data)
@@ -30,3 +31,4 @@ def audit_text(file_text):
 
     result = response.json()
     return result.get("answer", "未检测到审校结果")
+
