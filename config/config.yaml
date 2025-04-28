@@ -1,0 +1,6 @@
+auth:
+  username: admin
+  password: your_admin_password
+ui:
+  title: "YFZ12 深度审校助手"
+  subtitle: "上传资料，自动审校错误，生成审校报告"
