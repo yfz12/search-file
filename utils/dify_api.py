@@ -15,11 +15,12 @@ def audit_text(file_text):
     }
 
     data = {
+        "query": "请帮我审校以下内容并指出所有错误。",
         "inputs": {
             "text": file_text
         },
         "response_mode": "blocking",
-        "user": "audit_user"  # ✅ 这里必须有
+        "user": "audit_user"
     }
 
     response = requests.post(url, headers=headers, json=data)
@@ -31,4 +32,3 @@ def audit_text(file_text):
 
     result = response.json()
     return result.get("answer", "未检测到审校结果")
-
