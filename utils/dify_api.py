@@ -1,7 +1,7 @@
 import requests
 import os
 
-def audit_file(file_path):
+def audit_text(file_text):
     api_base = os.getenv("DIFY_API_URL")
     api_key = os.getenv("DIFY_API_KEY")
 
@@ -14,16 +14,11 @@ def audit_file(file_path):
         "Content-Type": "application/json"
     }
 
-    # 读取文件内容
-    with open(file_path, "r", encoding="utf-8") as f:
-        file_content = f.read()
-
-    # 构建聊天消息体
     data = {
         "inputs": {
-            "text": file_content
+            "text": file_text
         },
-        "response_mode": "blocking"  # 阻塞式，一次返回完整结果
+        "response_mode": "blocking"
     }
 
     response = requests.post(url, headers=headers, json=data)
@@ -34,6 +29,4 @@ def audit_file(file_path):
         return "调用Dify失败，请检查API KEY、Agent配置或文件格式。"
 
     result = response.json()
-
-    # 拿到回答
     return result.get("answer", "未检测到审校结果")
