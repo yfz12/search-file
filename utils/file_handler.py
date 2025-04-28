@@ -105,13 +105,13 @@ def handle_uploaded_file(uploaded_file):
     elif uploaded_file.type == "text/markdown":
         # 处理Markdown文件
         file_text = uploaded_file.getvalue().decode("utf-8")
-    
+
     # 输出 file_text 用于调试
     print("Extracted file text:", file_text)
 
     # 检查 file_text 是否为空
     if not file_text.strip():
-        raise ValueError("无法提取有效的文本内容，请检查文件格式或内容。")
+        raise ValueError(f"无法提取有效的文本内容，文件类型或内容可能无法识别：{uploaded_file.type}")
 
     # 调用审校API
     audit_result = audit_text(file_text)
