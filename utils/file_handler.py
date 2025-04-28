@@ -173,4 +173,8 @@ def handle_uploaded_file(uploaded_file):
         st.error("审校结果为空，请检查文件内容或API设置。")
         return file_path, "审校失败"
 
+    # 显示审校结果
+    st.subheader("审校报告")
+    st.write(audit_result)  # 显示审校后的内容
+
     return file_path, audit_result
