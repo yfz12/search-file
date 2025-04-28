@@ -70,7 +70,6 @@
 
 #     return file_path, audit_result  # 返回文件路径和审校结果
 
-
 import os
 
 def handle_uploaded_file(uploaded_file):
@@ -106,8 +105,8 @@ def handle_uploaded_file(uploaded_file):
         # 处理Markdown文件
         file_text = uploaded_file.getvalue().decode("utf-8")
 
-    # 输出 file_text 用于调试
-    print("Extracted file text:", file_text)
+    # 调试：打印 file_text 内容
+    print(f"Extracted text from the file: {file_text[:200]}...")  # 打印前200个字符以便查看
 
     # 检查 file_text 是否为空
     if not file_text.strip():
@@ -117,4 +116,5 @@ def handle_uploaded_file(uploaded_file):
     audit_result = audit_text(file_text)
 
     return file_path, audit_result
+
 
