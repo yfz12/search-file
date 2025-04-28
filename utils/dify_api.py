@@ -1,5 +1,6 @@
 import requests
 import os
+import streamlit as st  # 既然你在用streamlit，可以提前导入
 
 def audit_text(file_text):
     api_base = os.getenv("DIFY_API_URL")
@@ -14,20 +15,21 @@ def audit_text(file_text):
         "Content-Type": "application/json"
     }
 
+    # 核心改动在这里
+    query_content = f"请帮我审校以下内容并指出所有错误：\n\n{file_text}"
+
     data = {
-        "query": "请帮我审校以下内容并指出所有错误。",
-        "inputs": {
-            "text": file_text
-        },
+        "query": query_content,
+        "inputs": {},  # 不传inputs了
         "response_mode": "blocking",
         "user": "audit_user"
     }
 
-    response = requests.post(url, headers=headers, json=data)
-
-    if response.status_code != 200:
-        import streamlit as st
-        st.error(f"Dify API返回错误：{response.status_code} - {response.text}")
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        st.error(f"调用Dify API失败：{str(e)}")
         return "调用Dify失败，请检查API KEY、Agent配置或文件格式。"
 
     result = response.json()
