@@ -1,6 +1,8 @@
 streamlit
 python-dotenv
-PyPDF2
+requests
+PyMuPDF
 python-docx
-openai
-reportlab
+pandas
+openpyxl
+fpdf
