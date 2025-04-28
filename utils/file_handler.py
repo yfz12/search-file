@@ -71,6 +71,7 @@
 #     return file_path, audit_result  # 返回文件路径和审校结果
 
 import os
+from utils.dify_api import audit_text
 
 def handle_uploaded_file(uploaded_file):
     # 获取文件保存路径
