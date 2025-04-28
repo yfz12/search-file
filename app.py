@@ -101,9 +101,9 @@ def main():
             st.subheader("审校报告")
             st.write(audit_result)
 
-            # 生成 PDF
-            pdf_path = generate_pdf(audit_result)
-            st.download_button("下载审校报告（PDF）", data=open(pdf_path, "rb"), file_name="audit_report.pdf", mime="application/pdf")
+            # # 生成 PDF
+            # pdf_path = generate_pdf(audit_result)
+            # st.download_button("下载审校报告（PDF）", data=open(pdf_path, "rb"), file_name="audit_report.pdf", mime="application/pdf")
             
             # 可提问
             question = st.text_input("提问（例如：哪里错得最严重？）")
