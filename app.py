@@ -1,31 +1,29 @@
 import streamlit as st
 import os
-from utils.file_handler import handle_uploaded_file
-from utils.dify_api import audit_file
+from utils.file_handler import handle_uploaded_file, extract_text_from_file
+from utils.dify_api import audit_text
 from utils.pdf_generator import generate_pdf
 from dotenv import load_dotenv
 
 # 加载环境变量
 load_dotenv()
 
-# 配置
+# 页面设置
 st.set_page_config(page_title="YFZ12 审校助手", layout="wide")
 
-# 登录认证
+# 登录
 def authenticate_user():
     password = st.text_input("请输入密码", type="password")
     if password == os.getenv("ADMIN_PASSWORD"):
         return True
     return False
 
-# 文件上传部分
+# 上传文件
 def upload_file():
     uploaded_file = st.file_uploader("上传您的文件（PDF, Word, Excel, Markdown）", type=["pdf", "docx", "xlsx", "md"])
-    if uploaded_file is not None:
-        return uploaded_file
-    return None
+    return uploaded_file
 
-# 主页面
+# 主流程
 def main():
     if authenticate_user():
         st.title("YFZ12 审校助手")
@@ -36,23 +34,23 @@ def main():
         if uploaded_file:
             st.write("文件已上传，正在处理...")
             file_path = handle_uploaded_file(uploaded_file)
+            file_text = extract_text_from_file(file_path)
 
             # 审校
-            audit_result = audit_file(file_path)
+            audit_result = audit_text(file_text)
 
-            # 显示审校结果
+            # 展示结果
             st.subheader("审校报告")
             st.write(audit_result)
 
-            # 生成并提供下载PDF报告
+            # 生成 PDF
             pdf_path = generate_pdf(audit_result)
-            st.download_button("下载审校报告（PDF）", data=pdf_path, file_name="audit_report.pdf", mime="application/pdf")
-        
-            # 聊天提问部分
+            st.download_button("下载审校报告（PDF）", data=open(pdf_path, "rb"), file_name="audit_report.pdf", mime="application/pdf")
+            
+            # 可提问
             question = st.text_input("提问（例如：哪里错得最严重？）")
             if question:
-                response = audit_result.get("response_to_question", "问题未能回答，请稍后再试。")
-                st.write(response)
+                st.write("暂不支持细分提问")  # 暂留
         else:
             st.info("请上传文件进行审校。")
     else:
