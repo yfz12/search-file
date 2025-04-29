@@ -98,8 +98,8 @@ def main():
             file_path, audit_result = handle_uploaded_file(uploaded_file)  # 获取文件路径和审校结果
 
             # 展示审校结果
-            st.subheader("审校报告")
-            st.write(audit_result)
+            # st.subheader("审校报告")
+            # st.write(audit_result)
 
             # # 生成 PDF
             # pdf_path = generate_pdf(audit_result)
