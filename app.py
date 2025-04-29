@@ -112,7 +112,7 @@ def main():
         else:
             st.info("请上传文件进行审校。")
     else:
-        st.write("请输入密码")
+        st.write(" ")
 
 if __name__ == "__main__":
     main()
