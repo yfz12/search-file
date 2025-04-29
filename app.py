@@ -105,10 +105,10 @@ def main():
             # pdf_path = generate_pdf(audit_result)
             # st.download_button("下载审校报告（PDF）", data=open(pdf_path, "rb"), file_name="audit_report.pdf", mime="application/pdf")
             
-            # 可提问
-            question = st.text_input("提问（例如：哪里错得最严重？）")
-            if question:
-                st.write("暂不支持细分提问")  # 暂留
+            # # 可提问
+            # question = st.text_input("提问（例如：哪里错得最严重？）")
+            # if question:
+            #     st.write("暂不支持细分提问")  # 暂留
         else:
             st.info("请上传文件进行审校。")
     else:
